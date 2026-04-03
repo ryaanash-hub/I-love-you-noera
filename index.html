@@ -2,44 +2,114 @@
 <html>
 <head>
 <title>For You ❤️</title>
+
 <style>
 body {
+  margin: 0;
   background: #0f172a;
   color: white;
   font-family: Arial;
   text-align: center;
-  padding: 50px;
+  overflow-x: hidden;
 }
+
+.container {
+  padding: 60px;
+}
+
 button {
-  padding: 15px;
+  padding: 15px 25px;
   font-size: 16px;
-  background: pink;
+  background: #ff4d6d;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
+  color: white;
+  cursor: pointer;
 }
-#msg {
+
+.section {
   display: none;
-  margin-top: 20px;
+  margin-top: 30px;
+  animation: fadeIn 2s;
+}
+
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
+/* floating hearts */
+.heart {
+  position: fixed;
+  color: pink;
+  animation: floatUp 5s linear infinite;
+}
+
+@keyframes floatUp {
+  from {
+    transform: translateY(100vh);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-10vh);
+    opacity: 0;
+  }
 }
 </style>
 </head>
+
 <body>
 
-<h1>I love you Noera ❤️</h1>
-<p>I made this just for you...</p>
+<div class="container">
+  <h1>I love you Noera ❤️</h1>
+  <p>I made something more for you...</p>
 
-<button onclick="show()">Click me</button>
+  <button onclick="nextStep()">Start</button>
 
-<p id="msg">
-I love you Noera, I'm sorry I made you upset and I'm especially sorry about how I handled everything.  
-You mean so much to me and I want to do better.  
-I love you so much ❤️
-</p>
+  <div id="step1" class="section">
+    <p>I'm really sorry for hurting you.</p>
+  </div>
+
+  <div id="step2" class="section">
+    <p>You mean so much to me, more than I show sometimes.</p>
+  </div>
+
+  <div id="step3" class="section">
+    <p>I’ve been thinking about everything, and I want to do better.</p>
+  </div>
+
+  <div id="step4" class="section">
+    <p>I’m not giving up on us ❤️</p>
+  </div>
+</div>
+
+<audio autoplay loop>
+  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+</audio>
 
 <script>
-function show() {
-  document.getElementById("msg").style.display = "block";
+let step = 0;
+
+function nextStep() {
+  step++;
+  if (step <= 4) {
+    document.getElementById("step" + step).style.display = "block";
+  }
 }
+
+/* floating hearts generator */
+setInterval(() => {
+  let heart = document.createElement("div");
+  heart.className = "heart";
+  heart.innerHTML = "❤️";
+  heart.style.left = Math.random() * 100 + "vw";
+  heart.style.fontSize = Math.random() * 20 + 20 + "px";
+  document.body.appendChild(heart);
+
+  setTimeout(() => {
+    heart.remove();
+  }, 5000);
+}, 300);
 </script>
 
 </body>
