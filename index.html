@@ -21,6 +21,7 @@ button {
   background: #ffb6c1;
   color: #1a1a1a;
   cursor: pointer;
+  box-shadow: 0 0 10px #c2dab8;
 }
 
 button:hover {
@@ -29,10 +30,43 @@ button:hover {
 
 hr {
   margin: 40px 0;
+  border: 1px solid #c2dab8;
 }
 
-#reward img {
-  border-radius: 10px;
+h2 {
+  color: #2e7d32;
+}
+
+#gameArea {
+  border: 2px solid #2e7d32;
+}
+
+/* FADE-IN IMAGES */
+.fade-img {
+  opacity: 0;
+  transition: opacity 2s ease;
+}
+
+.fade-img.show {
+  opacity: 1;
+}
+
+/* HEART EXPLOSION */
+.explosion-heart {
+  position: fixed;
+  font-size: 24px;
+  animation: explode 1s ease-out forwards;
+}
+
+@keyframes explode {
+  from {
+    transform: scale(1) translate(0,0);
+    opacity: 1;
+  }
+  to {
+    transform: scale(2) translate(var(--x), var(--y));
+    opacity: 0;
+  }
 }
 </style>
 </head>
@@ -44,32 +78,52 @@ hr {
 
 <button onclick="showMessage()">Click me</button>
 
-<p id="message" style="display:none;">
-I’m really sorry for hurting you.<br>
-You mean so much to me and I want to do better.<br>
-I love you ❤️
+<p id="message" style="display:none; max-width:600px; margin:auto;">
+Schone Noera,<br>
+licht dat mijn stille hart doet ontwaken,<br>
+Jouw ogen overstralen de sterren van de nacht;<br><br>
+
+In hun diepte laat mijn dolende ziel het verdriet verzaken<br>
+En rust zij zacht in warm en gouden pracht.<br><br>
+
+Je bruine haar valt als een zachte herfstomhelzing neer,<br>
+Een zijden schemer rond je lieve gelaat;<br><br>
+
+Zelfs jouw knieën, zo sierlijk, ontroeren mij steeds weer,<br>
+Mijn hart is het jouwe—nu en altijd, voorwaar.
 </p>
 
 <hr>
 
 <h2>Catch the hearts ❤️</h2>
 <p>Score: <span id="score">0</span></p>
-<div id="gameArea" style="position:relative; height:300px; border:1px solid #1a1a1a;"></div>
+<div id="gameArea" style="position:relative; height:300px;"></div>
 
-<!-- REWARD SECTION -->
+<!-- REWARD -->
 <div id="reward" style="display:none; margin-top:30px;">
   <h2>You unlocked something ❤️</h2>
-  
+
   <p>
-    You make me really happy.<br>
-    I love you more than I show sometimes.<br>
-    I'm really sorry ❤️
+    I love you ZOZOZOZOZOZOZO much noera,<br><br>
+
+    you really are the LOVE of my life,<br>
+    and I’ll love you my ENTIRE ENTIRE ENTIRE LIFE.<br><br>
+
+    I’ll love you until I can’t love you anymore.<br><br>
+
+    I still remember that video you sent me ages ago...<br>
+    hehe 😊<br><br>
+
+    I hope you still feel the same way,<br>
+    because I KNOW I DO.<br><br>
+
+    I love you noera ❤️
   </p>
 
   <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
-    <img src="pic1.jpg" width="150">
-    <img src="pic2.jpg" width="150">
-    <img src="pic3.jpg" width="150">
+    <img src="pic1.jpg" width="150" class="fade-img" id="img1">
+    <img src="pic2.jpg" width="150" class="fade-img" id="img2">
+    <img src="pic3.jpg" width="150" class="fade-img" id="img3">
   </div>
 </div>
 
@@ -91,7 +145,7 @@ I love you ❤️
 
 <script>
 
-// intro message
+// show poem
 function showMessage() {
   document.getElementById("message").style.display = "block";
 }
@@ -112,9 +166,30 @@ function spawnHeart() {
     document.getElementById("score").innerText = score;
     heart.remove();
 
-    // REWARD TRIGGER
     if (score === 10) {
       document.getElementById("reward").style.display = "block";
+
+      // fade images
+      setTimeout(() => document.getElementById("img1").classList.add("show"), 500);
+      setTimeout(() => document.getElementById("img2").classList.add("show"), 1500);
+      setTimeout(() => document.getElementById("img3").classList.add("show"), 2500);
+
+      // heart explosion 💥
+      for (let i = 0; i < 30; i++) {
+        let heart = document.createElement("div");
+        heart.className = "explosion-heart";
+        heart.innerHTML = "❤️";
+
+        heart.style.left = "50%";
+        heart.style.top = "50%";
+
+        heart.style.setProperty("--x", (Math.random() - 0.5) * 400 + "px");
+        heart.style.setProperty("--y", (Math.random() - 0.5) * 400 + "px");
+
+        document.body.appendChild(heart);
+
+        setTimeout(() => heart.remove(), 1000);
+      }
     }
   };
 
