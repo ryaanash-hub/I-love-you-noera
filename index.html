@@ -9,19 +9,9 @@ body {
   font-family: Arial;
   text-align: center;
   overflow-x: hidden;
-  transition:0.5s;
 }
 
-button {
-  padding:10px;
-  margin:10px;
-  border-radius:10px;
-  border:none;
-  background:#ffb6c1;
-  cursor:pointer;
-}
-
-/* LOCK SCREEN */
+/* LOCK */
 #lockScreen {
   position:fixed;
   top:0; left:0;
@@ -39,9 +29,12 @@ button {
 .trail {
   position:fixed;
   pointer-events:none;
+  font-size:18px;
   animation:fade 1s forwards;
 }
-@keyframes fade { to {opacity:0; transform:translateY(-20px);} }
+@keyframes fade {
+  to {opacity:0; transform:translateY(-20px);}
+}
 
 /* PETALS */
 .petal {
@@ -50,19 +43,19 @@ button {
   animation:fall linear forwards;
 }
 @keyframes fall {
-  to { transform:translateY(100vh); opacity:0; }
+  to { transform:translateY(100vh); opacity:0;}
 }
 
 /* POPUP */
 .popup {
   position:absolute;
-  animation:fadeUp 1.5s forwards;
+  animation:fadeUp 1.2s forwards;
 }
 @keyframes fadeUp {
-  to { opacity:0; transform:translateY(-30px); }
+  to {opacity:0; transform:translateY(-25px);}
 }
 
-/* CINEMATIC */
+/* CINEMA */
 #cinema {
  position:fixed;
  top:0; left:0;
@@ -78,14 +71,13 @@ button {
  padding:20px;
 }
 
-#holdMsg { opacity:0; transition:2s; }
+#holdMsg {opacity:0; transition:2s;}
 
 </style>
 </head>
 
 <body>
 
-<!-- 🔐 LOCK -->
 <div id="lockScreen">
 <h2>You cannot pass until you enter the name of the love of my lifes fortnite username 🎮❤️</h2>
 <input id="passwordInput">
@@ -126,63 +118,88 @@ button {
 <input id="code">
 <button onclick="checkCode()">Unlock</button>
 <div id="secretBox" style="display:none;">
-<p>HEHE , you guessed It , your always gonna be my sketchy kid ❤️</p>
+<p>
+HEHE , you guessed it , your ALWAYS gonna be my sketchy kid and I will ALWAYS be Noeras weatherboy ❤️
+</p>
 <img src="secret.jpg" width="200">
 </div>
 
 <div id="cinema">
-  <div id="cinemaText"></div>
-  <button onclick="closeCinema()">⬅ Back</button>
+<div id="cinemaText"></div>
+<button onclick="closeCinema()">⬅ Back</button>
 </div>
 
 <script>
 
-// 🔐 PASSWORD
+// PASSWORD
 function checkPassword(){
- let input=passwordInput.value;
+ if(passwordInput.value==="ussyflower"){
+  lockScreen.style.display="none";
 
- if(input==="ussyflower"){
-   lockScreen.style.display="none";
-
-   if(localStorage.getItem("visited")){
-     returnMsg.innerText="You came back… I was hoping you would ❤️";
-   } else {
-     returnMsg.innerText="Hi… this is all for you ❤️";
-     localStorage.setItem("visited","true");
-   }
+  if(localStorage.getItem("visited")){
+    returnMsg.innerText="You came back… I was hoping you would ❤️";
+  } else {
+    returnMsg.innerText="Hi… this is all for you ❤️";
+    localStorage.setItem("visited","true");
+  }
 
  } else {
-   wrongMsg.innerText="Nope 😏";
+  wrongMsg.innerText="Nope 😏";
  }
 }
 
-// 🕰️ TIMER
+// TIMER
 setInterval(()=>{
  let start=new Date("2025-10-09");
  let now=new Date();
  let diff=now-start;
+
  let days=Math.floor(diff/(1000*60*60*24));
- loveTimer.innerText=
- "I've loved you for "+days+" days ❤️\nSince the day I spoke to you hehe";
+ loveTimer.innerText="I've loved you for "+days+" days ❤️";
 },1000);
 
-// ✍️ TYPEWRITER
+// FULL POEM TYPEWRITER
+let poemText=`Schone Noera,
+licht dat mijn stille hart doet ontwaken,
+Jouw ogen overstralen de sterren van de nacht;
+
+In hun diepte laat mijn dolende ziel het verdriet verzaken
+En rust zij zacht in warm en gouden pracht;
+
+Je bruine haar valt als een zachte herfstomhelzing neer,
+Een zijden schemer rond je lieve gelaat;
+
+Zelfs jouw knieën, zo sierlijk, ontroeren mij steeds weer,
+Mijn hart is het jouwe—nu en altijd, voorwaar.`;
+
 function startTyping(){
- poem.innerText="Schone Noera...";
+ let i=0;
+ poem.innerHTML="";
+ let interval=setInterval(()=>{
+  poem.innerHTML += poemText[i]==="\n"?"<br>":poemText[i];
+  i++;
+  if(i>=poemText.length) clearInterval(interval);
+ },30);
 }
 
-// 💖 HEART TRAIL
+// HEART TRAIL SPELL "NOERA"
+let letters=["N","O","E","R","A"];
+let index=0;
+
 document.addEventListener("mousemove", e=>{
  let h=document.createElement("div");
  h.className="trail";
- h.innerHTML="❤️";
+ h.innerText=letters[index];
+ index=(index+1)%letters.length;
+
  h.style.left=e.pageX+"px";
  h.style.top=e.pageY+"px";
+
  document.body.appendChild(h);
  setTimeout(()=>h.remove(),1000);
 });
 
-// 🌸 PETALS
+// PETALS
 setInterval(()=>{
  let p=document.createElement("div");
  p.className="petal";
@@ -193,7 +210,7 @@ setInterval(()=>{
  setTimeout(()=>p.remove(),8000);
 },400);
 
-// 🎮 GAME
+// GAME FIXED
 let score=0;
 
 function spawnHeart(){
@@ -202,15 +219,16 @@ function spawnHeart(){
  h.style.position="absolute";
  h.style.left=Math.random()*90+"%";
  h.style.top="0px";
+ h.style.cursor="pointer";
 
  h.onclick=()=>{
   score++;
-  scoreSpan.innerText=score;
+  document.getElementById("score").innerText=score;
 
-  let msgs=["I LOVE YOU NOERA ❤️","keep going ❤️","you got this ❤️"];
+  let messages=["I LOVE YOU NOERA ❤️","keep going ❤️","you got this ❤️"];
   let pop=document.createElement("div");
   pop.className="popup";
-  pop.innerText=msgs[Math.floor(Math.random()*msgs.length)];
+  pop.innerText=messages[Math.floor(Math.random()*messages.length)];
   pop.style.left=h.style.left;
   pop.style.top=h.style.top;
   gameArea.appendChild(pop);
@@ -233,7 +251,7 @@ function spawnHeart(){
 }
 setInterval(spawnHeart,1200);
 
-// 🎬 CINEMATIC
+// CINEMATIC
 function cinematic(){
  winSound.play();
  cinema.style.display="flex";
@@ -271,7 +289,7 @@ function closeCinema(){
  cinemaText.innerHTML="";
 }
 
-// ❌ NO BUTTON
+// NO BUTTON
 let texts=["no","really?","you sure?","nah 😭"];
 function moveNo(){
  noBtn.innerText=texts[Math.floor(Math.random()*texts.length)];
@@ -280,22 +298,24 @@ function moveNo(){
  noBtn.style.top=Math.random()*80+"%";
 }
 
-// ✋ HOLD
+// HOLD
 let hold;
 holdBtn.onmousedown=()=>{
- hold=setTimeout(()=>{ holdMsg.style.opacity=1; },1500);
+ hold=setTimeout(()=>{holdMsg.style.opacity=1;},1500);
 }
 holdBtn.onmouseup=()=>clearTimeout(hold);
 
-// 🔐 SECRET
+// SECRET
 function checkCode(){
  if(code.value==="Sketchy"){
-   secretBox.style.display="block";
+  secretBox.style.display="block";
  }
 }
 
 // YES
-function yes(){ result.innerText="Of course I do ❤️"; }
+function yes(){
+ result.innerText="Of course I do ❤️";
+}
 
 </script>
 
