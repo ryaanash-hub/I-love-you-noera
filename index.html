@@ -111,6 +111,36 @@ setInterval(() => {
     heart.remove();
   }, 5000);
 }, 300);
+  let score = 0;
+
+function spawnHeart() {
+  let heart = document.createElement("div");
+  heart.innerHTML = "❤️";
+  heart.style.position = "absolute";
+  heart.style.left = Math.random() * 90 + "%";
+  heart.style.top = "0px";
+  heart.style.cursor = "pointer";
+
+  heart.onclick = () => {
+    score++;
+    document.getElementById("score").innerText = score;
+    heart.remove();
+  };
+
+  document.getElementById("gameArea").appendChild(heart);
+
+  let fall = setInterval(() => {
+    let top = parseInt(heart.style.top);
+    heart.style.top = top + 5 + "px";
+
+    if (top > 280) {
+      heart.remove();
+      clearInterval(fall);
+    }
+  }, 50);
+}
+
+setInterval(spawnHeart, 1000);
 </script>
 <hr>
 
