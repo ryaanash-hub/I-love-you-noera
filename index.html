@@ -26,6 +26,10 @@ button {
 hr {
   margin: 40px 0;
 }
+
+#reward img {
+  border-radius: 10px;
+}
 </style>
 </head>
 
@@ -48,10 +52,27 @@ I love you ❤️
 <p>Score: <span id="score">0</span></p>
 <div id="gameArea" style="position:relative; height:300px; border:1px solid white;"></div>
 
+<!-- REWARD SECTION -->
+<div id="reward" style="display:none; margin-top:30px;">
+  <h2>You unlocked something ❤️</h2>
+  
+  <p>
+    You make me really happy.<br>
+    I love you more than I show sometimes.<br>
+    I'm really sorry ❤️
+  </p>
+
+  <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
+    <img src="pic1.jpg" width="150">
+    <img src="pic2.jpg" width="150">
+    <img src="pic3.jpg" width="150">
+  </div>
+</div>
+
 <hr>
 
 <h2>Does Ryaan love Noera? ❤️</h2>
-<button onclick="yes()">Yes,OFCOURSE</button>
+<button onclick="yes()">Yes obviously</button>
 <button id="noBtn" onmouseover="moveNo()">No</button>
 <p id="result"></p>
 
@@ -66,7 +87,7 @@ I love you ❤️
 
 <script>
 
-// message
+// intro message
 function showMessage() {
   document.getElementById("message").style.display = "block";
 }
@@ -86,6 +107,11 @@ function spawnHeart() {
     score++;
     document.getElementById("score").innerText = score;
     heart.remove();
+
+    // REWARD TRIGGER
+    if (score === 10) {
+      document.getElementById("reward").style.display = "block";
+    }
   };
 
   document.getElementById("gameArea").appendChild(heart);
@@ -103,10 +129,10 @@ function spawnHeart() {
 
 setInterval(spawnHeart, 1000);
 
-// forgive buttons
+// love question
 function yes() {
   document.getElementById("result").innerText = "Of course I do. I always will ❤️";
-
+}
 
 function moveNo() {
   let btn = document.getElementById("noBtn");
