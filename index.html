@@ -6,76 +6,53 @@
 <style>
 body {
   background: linear-gradient(135deg, #ffb6c1, #c2dab8);
-  color: #1a1a1a;
   font-family: Arial;
   text-align: center;
-  padding: 20px;
   overflow-x: hidden;
   transition: 0.5s;
 }
 
-.dark {
-  background: #0b0f1a;
-  color: white;
-}
+.dark { background:#0b0f1a; color:white; }
 
 button {
-  padding: 12px 20px;
-  margin: 10px;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-  background: #ffb6c1;
+  padding:10px;
+  margin:10px;
+  border-radius:10px;
+  border:none;
+  background:#ffb6c1;
 }
 
-.dark button {
-  background: #222;
-  color: white;
-  box-shadow: 0 0 10px #ff4d6d;
-}
-
-hr { margin: 40px 0; }
-
-.fade-img { opacity: 0; transition: 2s; }
-.show { opacity: 1; }
-
-.explosion-heart {
+/* FOLLOW HEARTS */
+.trail {
   position: fixed;
-  font-size: 24px;
-  animation: explode 1s forwards;
+  pointer-events:none;
+  animation: fade 1s forwards;
+}
+@keyframes fade {
+  to { opacity:0; transform: translateY(-20px); }
 }
 
-@keyframes explode {
-  to {
-    transform: translate(var(--x), var(--y)) scale(2);
-    opacity: 0;
-  }
+/* CINEMATIC */
+#cinema {
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background:black;
+  color:white;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  font-size:24px;
+  z-index:999;
+  text-align:center;
 }
 
-.petal {
-  position: fixed;
-  top: -10px;
-  animation: fall linear forwards;
-}
+/* SECRET */
+#secretBox { display:none; margin-top:20px; }
 
-@keyframes fall {
-  to {
-    transform: translateY(100vh) rotate(360deg);
-    opacity: 0;
-  }
-}
+.fade-img { opacity:0; transition:2s; }
+.show { opacity:1; }
 
-.popup {
-  position: absolute;
-  font-size: 14px;
-  animation: fadeUp 1.5s forwards;
-  pointer-events: none;
-}
-
-@keyframes fadeUp {
-  0% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-30px); }
-}
 </style>
 </head>
 
@@ -92,172 +69,127 @@ hr { margin: 40px 0; }
 <hr>
 
 <h2>Catch the hearts ❤️</h2>
-<p>Score: <span id="score">0</span></p>
+<p>Level: <span id="level">1</span> | Score: <span id="score">0</span></p>
 <div id="gameArea" style="height:300px; position:relative;"></div>
 
 <div id="reward" style="display:none;">
   <h2>You unlocked something ❤️</h2>
-
-  <p>
-    I love you ZOZOZOZOZOZOZO much noera,<br><br>
-    you really are the LOVE of my life,<br>
-    and I’ll love you my ENTIRE ENTIRE ENTIRE LIFE.<br><br>
-    I’ll love you until I can’t love you anymore.<br><br>
-    I still remember that video you sent me ages ago... hehe 😊<br><br>
-    I hope you still feel the same way,<br>
-    because I KNOW I DO.<br><br>
-    I love you noera ❤️
-  </p>
-
+  <p>I love you noera ❤️</p>
   <img src="pic1.jpg" width="150" class="fade-img" id="i1">
-  <img src="pic2.jpg" width="150" class="fade-img" id="i2">
-  <img src="pic3.jpg" width="150" class="fade-img" id="i3">
 </div>
 
 <audio id="winSound" src="love.mp3"></audio>
 
 <hr>
 
-<h2>Does Ryaan love Noera? ❤️</h2>
-<button onclick="yes()">Yes obviously</button>
-<button id="noBtn" onmouseover="moveNo()">No</button>
-<p id="result"></p>
+<h2>Secret 👀</h2>
+<input id="code" placeholder="enter password">
+<button onclick="checkCode()">Unlock</button>
 
-<hr>
+<div id="secretBox">
+  <p>HEHE , you guessed It , your always gonna be my sketchy kid :)  
+  AND ILL ALWAYS FOREVER AND EVER be NOERAS weatherboy ❤️</p>
+  <img src="secret.jpg" width="200">
+</div>
 
-<h2>Catch those hearts Noera ❤️</h2>
-<p>Catch those hearts Noera, and maybe you will see something AWESOME 👀❤️</p>
+<div id="cinema">
+  <div id="cinemaText"></div>
+</div>
 
 <script>
 
-// DARK MODE
-function toggleDark(){
-  document.body.classList.toggle("dark");
-}
+// DARK
+function toggleDark(){ document.body.classList.toggle("dark"); }
 
-// TYPEWRITER
-let text = `Schone Noera,
-licht dat mijn stille hart doet ontwaken,
-Jouw ogen overstralen de sterren van de nacht;
-
-In hun diepte laat mijn dolende ziel het verdriet verzaken
-En rust zij zacht in warm en gouden pracht;
-
-Je bruine haar valt als een zachte herfstomhelzing neer,
-Een zijden schemer rond je lieve gelaat;
-
-Zelfs jouw knieën, zo sierlijk, ontroeren mij steeds weer,
-Mijn hart is het jouwe—nu en altijd, voorwaar.`;
-
-function startTyping(){
-  let el = document.getElementById("poem");
-  el.innerHTML = "";
-  let i = 0;
-
-  let interval = setInterval(()=>{
-    el.innerHTML += text[i] === "\n" ? "<br>" : text[i];
-    i++;
-    if(i >= text.length) clearInterval(interval);
-  }, 30);
-}
-
-// TIMER (FIXED)
+// TIMER
 function updateLoveTimer(){
-  let start = new Date("2025-10-09");
-  let now = new Date();
-  let diff = now - start;
-
-  let days = Math.floor(diff/(1000*60*60*24));
-  let hours = Math.floor((diff/(1000*60*60)) % 24);
-  let minutes = Math.floor((diff/(1000*60)) % 60);
-
-  document.getElementById("loveTimer").innerText =
-  "I've loved you for " + days + " days, " + hours + " hours, and " + minutes + " minutes ❤️\nSince the day I spoke to you hehe";
+ let start=new Date("2025-10-09");
+ let now=new Date();
+ let days=Math.floor((now-start)/(1000*60*60*24));
+ loveTimer.innerText="I've loved you for "+days+" days ❤️\nSince the day I spoke to you hehe";
 }
-
 setInterval(updateLoveTimer,1000);
 updateLoveTimer();
 
+// TYPEWRITER
+let txt="Schone Noera...";
+function startTyping(){
+ let i=0;
+ poem.innerHTML="";
+ let int=setInterval(()=>{
+  poem.innerHTML+=txt[i]||"";
+  i++;
+  if(i>=txt.length) clearInterval(int);
+ },30);
+}
+
+// FOLLOW HEARTS
+document.addEventListener("mousemove", e=>{
+ let h=document.createElement("div");
+ h.className="trail";
+ h.innerHTML="❤️";
+ h.style.left=e.pageX+"px";
+ h.style.top=e.pageY+"px";
+ document.body.appendChild(h);
+ setTimeout(()=>h.remove(),1000);
+});
+
 // GAME
-let score=0;
+let score=0, level=1;
 
 function spawnHeart(){
-  let h=document.createElement("div");
-  h.innerHTML="❤️";
-  h.style.position="absolute";
-  h.style.left=Math.random()*90+"%";
-  h.style.top="0px";
-  h.style.cursor="pointer";
+ let h=document.createElement("div");
+ h.innerHTML="❤️";
+ h.style.position="absolute";
+ h.style.left=Math.random()*90+"%";
+ h.style.top="0px";
 
-  h.onclick=()=>{
-    score++;
-    document.getElementById("score").innerText=score;
+ h.onclick=()=>{
+  score++;
+  scoreSpan.innerText=score;
 
-    let pop=document.createElement("div");
-    pop.className="popup";
-    pop.innerText="WELL DONE, I'M PROUD OF YOU AND I LOVE YOU ❤️";
-    pop.style.left=h.style.left;
-    pop.style.top=h.style.top;
-    document.getElementById("gameArea").appendChild(pop);
-    setTimeout(()=>pop.remove(),1500);
+  if(score%5==0){
+    level++;
+    levelSpan.innerText=level;
+  }
 
-    if(Math.random()<0.3){
-      h.innerHTML="I LOVE YOU";
-    }
+  h.remove();
 
-    h.remove();
+  if(score==15){
+    win();
+  }
+ };
 
-    if(score==10){
-      document.getElementById("winSound").play();
-      document.getElementById("reward").style.display="block";
+ gameArea.appendChild(h);
 
-      setTimeout(()=>i1.classList.add("show"),500);
-      setTimeout(()=>i2.classList.add("show"),1500);
-      setTimeout(()=>i3.classList.add("show"),2500);
+ let speed=5+level*2;
 
-      for(let i=0;i<30;i++){
-        let e=document.createElement("div");
-        e.className="explosion-heart";
-        e.innerHTML="❤️";
-        e.style.left="50%";
-        e.style.top="50%";
-        e.style.setProperty("--x",(Math.random()-0.5)*400+"px");
-        e.style.setProperty("--y",(Math.random()-0.5)*400+"px");
-        document.body.appendChild(e);
-        setTimeout(()=>e.remove(),1000);
-      }
-    }
-  };
-
-  document.getElementById("gameArea").appendChild(h);
-
-  let fall=setInterval(()=>{
-    let t=parseInt(h.style.top);
-    h.style.top=t+5+"px";
-    if(t>280){h.remove();clearInterval(fall);}
-  },50);
+ let fall=setInterval(()=>{
+  let t=parseInt(h.style.top);
+  h.style.top=t+speed+"px";
+  if(t>280){h.remove();clearInterval(fall);}
+ },50);
 }
+
 setInterval(spawnHeart,1000);
 
-// PETALS
-setInterval(()=>{
-  let p=document.createElement("div");
-  p.className="petal";
-  p.innerHTML="🌸";
-  p.style.left=Math.random()*100+"vw";
-  p.style.animationDuration=(3+Math.random()*5)+"s";
-  document.body.appendChild(p);
-  setTimeout(()=>p.remove(),8000);
-},300);
+function win(){
+ winSound.play();
+ reward.style.display="block";
+ setTimeout(()=>i1.classList.add("show"),500);
 
-// QUESTION
-function yes(){
-  result.innerText="Of course I do ❤️";
+ // CINEMATIC
+ cinema.style.display="flex";
+ cinemaText.innerHTML="Hey...<br><br>I meant everything I said.<br><br>I love you.";
 }
-function moveNo(){
-  noBtn.style.position="absolute";
-  noBtn.style.left=Math.random()*80+"%";
-  noBtn.style.top=Math.random()*80+"%";
+
+// SECRET
+function checkCode(){
+ if(code.value==="Sketchy"){
+   secretBox.style.display="block";
+ } else {
+   alert("wrong 😏");
+ }
 }
 
 </script>
