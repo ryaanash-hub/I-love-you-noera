@@ -60,11 +60,7 @@ button {
   to { transform:translate(var(--x),var(--y)) scale(2); opacity:0;}
 }
 
-/* IMAGES */
-.fade-img { opacity:0; transition:2s; }
-.show { opacity:1; }
-
-/* CINEMA */
+/* CINEMATIC */
 #cinema {
  position:fixed;
  top:0; left:0;
@@ -74,9 +70,10 @@ button {
  display:none;
  align-items:center;
  justify-content:center;
- font-size:24px;
+ font-size:22px;
  z-index:999;
  text-align:center;
+ padding:20px;
 }
 </style>
 </head>
@@ -96,25 +93,6 @@ button {
 <h2>Catch the hearts ❤️</h2>
 <p>Level: <span id="levelSpan">1</span> | Score: <span id="scoreSpan">0</span></p>
 <div id="gameArea" style="height:300px; position:relative;"></div>
-
-<div id="reward" style="display:none;">
-  <h2>You unlocked something ❤️</h2>
-
-  <p>
-    I love you ZOZOZOZOZOZOZO much noera,<br><br>
-    you really are the LOVE of my life,<br>
-    and I’ll love you my ENTIRE ENTIRE ENTIRE LIFE.<br><br>
-    I’ll love you until I can’t love you anymore.<br><br>
-    I still remember that video you sent me ages ago... hehe 😊<br><br>
-    I hope you still feel the same way,<br>
-    because I KNOW I DO.<br><br>
-    I love you noera ❤️
-  </p>
-
-  <img src="pic1.jpg" width="150" class="fade-img" id="i1">
-  <img src="pic2.jpg" width="150" class="fade-img" id="i2">
-  <img src="pic3.jpg" width="150" class="fade-img" id="i3">
-</div>
 
 <audio id="winSound" src="love.mp3"></audio>
 
@@ -167,7 +145,7 @@ function updateLoveTimer(){
 setInterval(updateLoveTimer,1000);
 updateLoveTimer();
 
-// TYPEWRITER
+// TYPEWRITER POEM
 let text=`Schone Noera,
 licht dat mijn stille hart doet ontwaken,
 Jouw ogen overstralen de sterren van de nacht;
@@ -208,10 +186,10 @@ setInterval(()=>{
  p.className="petal";
  p.innerHTML="🌸";
  p.style.left=Math.random()*100+"vw";
- p.style.animationDuration=(3+Math.random()*5)+"s";
+ p.style.animationDuration=(4+Math.random()*6)+"s"; // slower petals
  document.body.appendChild(p);
- setTimeout(()=>p.remove(),8000);
-},300);
+ setTimeout(()=>p.remove(),9000);
+},400);
 
 // GAME
 let score=0, level=1;
@@ -228,7 +206,6 @@ function spawnHeart(){
   score++;
   scoreSpan.innerText=score;
 
-  // POPUP
   let pop=document.createElement("div");
   pop.className="popup";
   pop.innerText="WELL DONE, I'M PROUD OF YOU AND I LOVE YOU ❤️";
@@ -248,14 +225,14 @@ function spawnHeart(){
 
   h.remove();
 
-  if(score===15){
+  if(score===10){ // 🔥 WIN AT 10
     win();
   }
  };
 
  gameArea.appendChild(h);
 
- let speed=5+level*2;
+ let speed=2+level; // 🔥 SLOWER FALL
 
  let fall=setInterval(()=>{
   let t=parseInt(h.style.top);
@@ -263,17 +240,12 @@ function spawnHeart(){
   if(t>280){h.remove();clearInterval(fall);}
  },50);
 }
-setInterval(spawnHeart,1000);
+setInterval(spawnHeart,1200); // slower spawn
 
+// 🎬 CINEMATIC
 function win(){
  winSound.play();
- reward.style.display="block";
 
- setTimeout(()=>i1.classList.add("show"),500);
- setTimeout(()=>i2.classList.add("show"),1500);
- setTimeout(()=>i3.classList.add("show"),2500);
-
- // EXPLOSION
  for(let i=0;i<30;i++){
   let e=document.createElement("div");
   e.className="explosion-heart";
@@ -286,9 +258,51 @@ function win(){
   setTimeout(()=>e.remove(),1000);
  }
 
- // CINEMATIC
  cinema.style.display="flex";
- cinemaText.innerHTML="Hey...<br><br>I meant everything I said.<br><br>I love you.";
+ cinemaText.innerHTML="";
+
+ let message=`I love you ZOZOZOZOZOZOZO much noera...
+
+you really are the LOVE of my life,
+and I’ll love you my ENTIRE ENTIRE ENTIRE LIFE.
+
+I’ll love you until I can’t love you anymore.
+
+I still remember that video you sent me ages ago... hehe 😊
+
+I hope you still feel the same way,
+because I KNOW I DO.
+
+I love you noera ❤️`;
+
+ let i=0;
+
+ let typing=setInterval(()=>{
+  cinemaText.innerHTML += message[i]==="\n"?"<br>":message[i];
+  i++;
+  if(i>=message.length){
+    clearInterval(typing);
+    setTimeout(showImages,1000);
+  }
+ },30);
+}
+
+function showImages(){
+ let container=document.createElement("div");
+ container.style.marginTop="20px";
+
+ ["pic1.jpg","pic2.jpg","pic3.jpg"].forEach((src,i)=>{
+  let img=document.createElement("img");
+  img.src=src;
+  img.width=150;
+  img.style.opacity=0;
+  img.style.transition="2s";
+  container.appendChild(img);
+
+  setTimeout(()=>img.style.opacity=1,1000*i+500);
+ });
+
+ cinemaText.appendChild(container);
 }
 
 // QUESTION
