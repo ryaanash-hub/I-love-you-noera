@@ -1,4 +1,3 @@
-<h2>NEW VERSION TEST</h2>
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,112 +5,74 @@
 
 <style>
 body {
-  margin: 0;
   background: #0f172a;
   color: white;
   font-family: Arial;
   text-align: center;
-  overflow-x: hidden;
-}
-
-.container {
-  padding: 60px;
+  padding: 20px;
 }
 
 button {
-  padding: 15px 25px;
+  padding: 12px 20px;
+  margin: 10px;
   font-size: 16px;
-  background: #ff4d6d;
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
+  background: #ff4d6d;
   color: white;
   cursor: pointer;
 }
 
-.section {
-  display: none;
-  margin-top: 30px;
-  animation: fadeIn 2s;
-}
-
-@keyframes fadeIn {
-  from {opacity: 0;}
-  to {opacity: 1;}
-}
-
-/* floating hearts */
-.heart {
-  position: fixed;
-  color: pink;
-  animation: floatUp 5s linear infinite;
-}
-
-@keyframes floatUp {
-  from {
-    transform: translateY(100vh);
-    opacity: 1;
-  }
-  to {
-    transform: translateY(-10vh);
-    opacity: 0;
-  }
+hr {
+  margin: 40px 0;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-  <h1>I love you Noera ❤️</h1>
-  <p>I made something more for you...</p>
+<h1>I love you Noera ❤️</h1>
+<p>I made this just for you...</p>
 
-  <button onclick="nextStep()">Start</button>
+<button onclick="showMessage()">Click me</button>
 
-  <div id="step1" class="section">
-    <p>I'm really sorry for hurting you.</p>
-  </div>
+<p id="message" style="display:none;">
+I’m really sorry for hurting you.<br>
+You mean so much to me and I want to do better.<br>
+I love you ❤️
+</p>
 
-  <div id="step2" class="section">
-    <p>You mean so much to me, more than I show sometimes.</p>
-  </div>
+<hr>
 
-  <div id="step3" class="section">
-    <p>Im going to be even better for you Noera , so that I can make sure your happy <3.</p>
-  </div>
+<h2>Catch the hearts ❤️</h2>
+<p>Score: <span id="score">0</span></p>
+<div id="gameArea" style="position:relative; height:300px; border:1px solid white;"></div>
 
-  <div id="step4" class="section">
-    <p>I love you the MOSTEST IN THE WHOLE WIDE WORLD , EVERYTHING ABOUT YOU, YOUR FLAWS , THE WAY YOUR HANDLE THINGS , YOUR DETERMINATION TO KEEP GOING INTO THE NEXT DAY EVEN THOUGH LIFE IS SO HARD FOR YOU , It makes me really see a future with you Noera and I want you to see the same thing I do. I love you from the bottom of my heart. ❤️</p>
-  </div>
-</div>
+<hr>
 
-<audio autoplay loop>
-  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-</audio>
+<h2>Do you forgive me? 🥺</h2>
+<button onclick="yes()">Yes</button>
+<button id="noBtn" onmouseover="moveNo()">No</button>
+<p id="result"></p>
+
+<hr>
+
+<h2>Why I love you ❤️</h2>
+<p>
+- Your smile<br>
+- The way you talk<br>
+- Everything about you
+</p>
 
 <script>
-let step = 0;
 
-function nextStep() {
-  step++;
-  if (step <= 4) {
-    document.getElementById("step" + step).style.display = "block";
-  }
+// message
+function showMessage() {
+  document.getElementById("message").style.display = "block";
 }
 
-/* floating hearts generator */
-setInterval(() => {
-  let heart = document.createElement("div");
-  heart.className = "heart";
-  heart.innerHTML = "❤️";
-  heart.style.left = Math.random() * 100 + "vw";
-  heart.style.fontSize = Math.random() * 20 + 20 + "px";
-  document.body.appendChild(heart);
-
-  setTimeout(() => {
-    heart.remove();
-  }, 5000);
-}, 300);
-  let score = 0;
+// game
+let score = 0;
 
 function spawnHeart() {
   let heart = document.createElement("div");
@@ -141,13 +102,20 @@ function spawnHeart() {
 }
 
 setInterval(spawnHeart, 1000);
+
+// forgive buttons
+function yes() {
+  document.getElementById("result").innerText = "I love you ❤️";
+}
+
+function moveNo() {
+  let btn = document.getElementById("noBtn");
+  btn.style.position = "absolute";
+  btn.style.left = Math.random() * 80 + "%";
+  btn.style.top = Math.random() * 80 + "%";
+}
+
 </script>
-<hr>
 
-<h2>Catch the hearts ❤️</h2>
-<p>Score: <span id="score">0</span></p>
-
-<div id="gameArea" style="position:relative; height:300px; border:1px solid white;"></div>
 </body>
 </html>
-
