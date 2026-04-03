@@ -10,6 +10,7 @@ body {
   font-family: Arial;
   text-align: center;
   padding: 20px;
+  overflow-x: hidden;
 }
 
 button {
@@ -41,30 +42,37 @@ h2 {
   border: 2px solid #2e7d32;
 }
 
-/* FADE-IN IMAGES */
+/* Fade images */
 .fade-img {
   opacity: 0;
   transition: opacity 2s ease;
 }
-
 .fade-img.show {
   opacity: 1;
 }
 
-/* HEART EXPLOSION */
+/* Heart explosion */
 .explosion-heart {
   position: fixed;
   font-size: 24px;
   animation: explode 1s ease-out forwards;
 }
-
 @keyframes explode {
-  from {
-    transform: scale(1) translate(0,0);
-    opacity: 1;
-  }
+  from { transform: scale(1); opacity:1; }
+  to { transform: scale(2) translate(var(--x), var(--y)); opacity:0; }
+}
+
+/* Petals */
+.petal {
+  position: fixed;
+  top: -10px;
+  font-size: 18px;
+  animation: fall linear forwards;
+  opacity: 0.8;
+}
+@keyframes fall {
   to {
-    transform: scale(2) translate(var(--x), var(--y));
+    transform: translateY(100vh) rotate(360deg);
     opacity: 0;
   }
 }
@@ -74,6 +82,8 @@ h2 {
 <body>
 
 <h1>I love you Noera ❤️</h1>
+<h2 id="loveTimer"></h2>
+
 <p>I made this just for you...</p>
 
 <button onclick="showMessage()">Click me</button>
@@ -99,7 +109,6 @@ Mijn hart is het jouwe—nu en altijd, voorwaar.
 <p>Score: <span id="score">0</span></p>
 <div id="gameArea" style="position:relative; height:300px;"></div>
 
-<!-- REWARD -->
 <div id="reward" style="display:none; margin-top:30px;">
   <h2>You unlocked something ❤️</h2>
 
@@ -136,11 +145,9 @@ Mijn hart is het jouwe—nu en altijd, voorwaar.
 
 <hr>
 
-<h2>Why I love you ❤️</h2>
+<h2>Catch those hearts Noera ❤️</h2>
 <p>
-- Your smile<br>
-- The way you talk<br>
-- Everything about you
+Catch those hearts Noera, and maybe you will see something AWESOME 👀❤️
 </p>
 
 <script>
@@ -149,6 +156,23 @@ Mijn hart is het jouwe—nu en altijd, voorwaar.
 function showMessage() {
   document.getElementById("message").style.display = "block";
 }
+
+// love timer
+function updateLoveTimer() {
+  let startDate = new Date("2023-10-09T00:00:00"); // CHANGE YEAR if needed
+  let now = new Date();
+  let diff = now - startDate;
+
+  let days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  let hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+  let minutes = Math.floor((diff / (1000 * 60)) % 60);
+
+  document.getElementById("loveTimer").innerText =
+    "I've loved you for " + days + " days, " + hours + " hours, and " + minutes + " minutes ❤️";
+}
+
+setInterval(updateLoveTimer, 1000);
+updateLoveTimer();
 
 // game
 let score = 0;
@@ -169,12 +193,11 @@ function spawnHeart() {
     if (score === 10) {
       document.getElementById("reward").style.display = "block";
 
-      // fade images
       setTimeout(() => document.getElementById("img1").classList.add("show"), 500);
       setTimeout(() => document.getElementById("img2").classList.add("show"), 1500);
       setTimeout(() => document.getElementById("img3").classList.add("show"), 2500);
 
-      // heart explosion 💥
+      // explosion
       for (let i = 0; i < 30; i++) {
         let heart = document.createElement("div");
         heart.className = "explosion-heart";
@@ -187,7 +210,6 @@ function spawnHeart() {
         heart.style.setProperty("--y", (Math.random() - 0.5) * 400 + "px");
 
         document.body.appendChild(heart);
-
         setTimeout(() => heart.remove(), 1000);
       }
     }
@@ -207,6 +229,20 @@ function spawnHeart() {
 }
 
 setInterval(spawnHeart, 1000);
+
+// petals
+setInterval(() => {
+  let petal = document.createElement("div");
+  petal.className = "petal";
+  petal.innerHTML = "🌸";
+
+  petal.style.left = Math.random() * 100 + "vw";
+  petal.style.animationDuration = (3 + Math.random() * 5) + "s";
+
+  document.body.appendChild(petal);
+
+  setTimeout(() => petal.remove(), 8000);
+}, 300);
 
 // love question
 function yes() {
