@@ -246,7 +246,7 @@ setInterval(()=>{
  loveTimer.innerText=`${d}d ${h}h ${m}m ${s}s ❤️`;
 },1000);
 
-// FULL POEM TYPEWRITER
+// POEM
 let poemText=`Schone Noera, licht dat mijn stille hart doet ontwaken,
 Jouw ogen overstralen de sterren van de nacht;
 
@@ -304,7 +304,16 @@ function spawnHeart(){
 
  h.onclick=()=>{
   score++;
-  score.innerText=score;
+  document.getElementById("score").innerText=score;
+
+  // 💬 NEW MESSAGE
+  let pop=document.createElement("div");
+  pop.className="popup";
+  pop.innerText="WELL DONE NOERA, IM ZOZOZO PROUD OF YOU ❤️";
+  pop.style.left=h.style.left;
+  pop.style.top=h.style.top;
+  gameArea.appendChild(pop);
+  setTimeout(()=>pop.remove(),1200);
 
   if(score%5===0){
     level++;
@@ -330,7 +339,7 @@ function spawnHeart(){
 }
 setInterval(spawnHeart,1200);
 
-// CINEMATIC UPGRADE
+// CINEMATIC
 function cinematic(){
  winSound.play();
  cinema.style.display="flex";
@@ -369,7 +378,7 @@ function closeCinema(){
  cinema.style.display="none";
 }
 
-// FUNNY NO BUTTON
+// NO BUTTON
 let texts=["no","really?","are you sure?","nah 😭","you serious?","wrong answer 😭"];
 function moveNo(){
  noBtn.innerText=texts[Math.floor(Math.random()*texts.length)];
