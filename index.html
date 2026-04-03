@@ -9,10 +9,7 @@ body {
   font-family: Arial;
   text-align: center;
   overflow-x: hidden;
-  transition: 0.5s;
 }
-
-.dark { background:#0b0f1a; color:white; }
 
 button {
   padding:10px;
@@ -20,44 +17,6 @@ button {
   border-radius:10px;
   border:none;
   background:#ffb6c1;
-}
-
-/* HEART TRAIL */
-.trail {
-  position: fixed;
-  pointer-events:none;
-  animation: fade 1s forwards;
-}
-@keyframes fade {
-  to { opacity:0; transform: translateY(-20px); }
-}
-
-/* PETALS */
-.petal {
-  position: fixed;
-  top:-10px;
-  animation: fall linear forwards;
-}
-@keyframes fall {
-  to { transform: translateY(100vh) rotate(360deg); opacity:0; }
-}
-
-/* POPUP */
-.popup {
-  position:absolute;
-  animation: fadeUp 1.5s forwards;
-}
-@keyframes fadeUp {
-  to { opacity:0; transform: translateY(-30px); }
-}
-
-/* EXPLOSION */
-.explosion-heart {
-  position:fixed;
-  animation: explode 1s forwards;
-}
-@keyframes explode {
-  to { transform:translate(var(--x),var(--y)) scale(2); opacity:0;}
 }
 
 /* CINEMATIC */
@@ -68,19 +27,36 @@ button {
  background:black;
  color:white;
  display:none;
+ flex-direction:column;
  align-items:center;
  justify-content:center;
- font-size:22px;
+ font-size:24px;
  z-index:999;
- text-align:center;
- padding:20px;
 }
+
+/* HEART TRAIL */
+.trail {
+ position:fixed;
+ pointer-events:none;
+ animation:fade 1s forwards;
+}
+@keyframes fade { to {opacity:0; transform:translateY(-20px);} }
+
+/* PETALS */
+.petal {
+ position:fixed;
+ top:-10px;
+ animation:fall linear forwards;
+}
+@keyframes fall { to {transform:translateY(100vh); opacity:0;} }
+
+/* HOLD BUTTON */
+#holdMsg { opacity:0; transition:2s; }
+
 </style>
 </head>
 
 <body>
-
-<button onclick="toggleDark()">🌙 Night Mode</button>
 
 <h1>I love you Noera ❤️</h1>
 <h2 id="loveTimer"></h2>
@@ -91,7 +67,7 @@ button {
 <hr>
 
 <h2>Catch the hearts ❤️</h2>
-<p>Level: <span id="levelSpan">1</span> | Score: <span id="scoreSpan">0</span></p>
+<p>Score: <span id="score">0</span></p>
 <div id="gameArea" style="height:300px; position:relative;"></div>
 
 <audio id="winSound" src="love.mp3"></audio>
@@ -105,71 +81,37 @@ button {
 
 <hr>
 
-<h2>Catch those hearts Noera ❤️</h2>
-<p>Catch those hearts Noera, and maybe you will see something AWESOME 👀❤️</p>
+<button id="holdBtn">Hold me</button>
+<p id="holdMsg">IM GONNA HOLD ON TO YOU JUST LIKE THIS ❤️</p>
 
 <hr>
 
 <h2>Secret 👀</h2>
-<input id="code" placeholder="enter password">
+<input id="code">
 <button onclick="checkCode()">Unlock</button>
-
 <div id="secretBox" style="display:none;">
-  <p>
-  HEHE , you guessed It , your always gonna be my sketchy kid :)<br>
-  AND ILL ALWAYS FOREVER AND EVER be NOERAS weatherboy ❤️
-  </p>
-  <img src="secret.jpg" width="200">
+<p>HEHE your always gonna be my sketchy kid ❤️</p>
+<img src="secret.jpg" width="200">
 </div>
 
 <div id="cinema"><div id="cinemaText"></div></div>
 
 <script>
 
-// DARK MODE
-function toggleDark(){ document.body.classList.toggle("dark"); }
-
 // TIMER
-function updateLoveTimer(){
+setInterval(()=>{
  let start=new Date("2025-10-09");
  let now=new Date();
- let diff=now-start;
+ let days=Math.floor((now-start)/(1000*60*60*24));
+ loveTimer.innerText="I've loved you for "+days+" days ❤️";
+},1000);
 
- let days=Math.floor(diff/(1000*60*60*24));
- let hours=Math.floor((diff/(1000*60*60))%24);
- let minutes=Math.floor((diff/(1000*60))%60);
-
- loveTimer.innerText =
- "I've loved you for "+days+" days, "+hours+" hours, "+minutes+" minutes ❤️\nSince the day I spoke to you hehe";
-}
-setInterval(updateLoveTimer,1000);
-updateLoveTimer();
-
-// TYPEWRITER POEM
-let text=`Schone Noera,
-licht dat mijn stille hart doet ontwaken,
-Jouw ogen overstralen de sterren van de nacht;
-
-In hun diepte laat mijn dolende ziel het verdriet verzaken
-En rust zij zacht in warm en gouden pracht;
-
-Je bruine haar valt als een zachte herfstomhelzing neer,
-Een zijden schemer rond je lieve gelaat;
-
-Zelfs jouw knieën, zo sierlijk, ontroeren mij steeds weer,
-Mijn hart is het jouwe—nu en altijd, voorwaar.`;
-
+// TYPEWRITER
 function startTyping(){
- let i=0;
- poem.innerHTML="";
- let int=setInterval(()=>{
-  poem.innerHTML += text[i]==="\n"?"<br>":text[i];
-  i++;
-  if(i>=text.length) clearInterval(int);
- },30);
+ poem.innerText="Schone Noera...";
 }
 
-// HEART TRAIL
+// HEART TRAIL forming effect
 document.addEventListener("mousemove", e=>{
  let h=document.createElement("div");
  h.className="trail";
@@ -186,13 +128,13 @@ setInterval(()=>{
  p.className="petal";
  p.innerHTML="🌸";
  p.style.left=Math.random()*100+"vw";
- p.style.animationDuration=(4+Math.random()*6)+"s"; // slower petals
+ p.style.animationDuration=(4+Math.random()*5)+"s";
  document.body.appendChild(p);
- setTimeout(()=>p.remove(),9000);
+ setTimeout(()=>p.remove(),8000);
 },400);
 
 // GAME
-let score=0, level=1;
+let score=0;
 
 function spawnHeart(){
  let h=document.createElement("div");
@@ -200,125 +142,94 @@ function spawnHeart(){
  h.style.position="absolute";
  h.style.left=Math.random()*90+"%";
  h.style.top="0px";
- h.style.cursor="pointer";
 
  h.onclick=()=>{
   score++;
   scoreSpan.innerText=score;
 
-  let pop=document.createElement("div");
-  pop.className="popup";
-  pop.innerText="WELL DONE, I'M PROUD OF YOU AND I LOVE YOU ❤️";
-  pop.style.left=h.style.left;
-  pop.style.top=h.style.top;
-  gameArea.appendChild(pop);
-  setTimeout(()=>pop.remove(),1500);
-
-  if(score%5===0){
-    level++;
-    levelSpan.innerText=level;
-  }
-
-  if(Math.random()<0.3){
-    h.innerHTML="I LOVE YOU";
-  }
+  let messages=["I LOVE YOU NOERA ❤️","keep going ❤️","you got this ❤️"];
+  let msg=document.createElement("div");
+  msg.innerText=messages[Math.floor(Math.random()*messages.length)];
+  msg.style.position="absolute";
+  msg.style.left=h.style.left;
+  msg.style.top=h.style.top;
+  gameArea.appendChild(msg);
+  setTimeout(()=>msg.remove(),1000);
 
   h.remove();
 
-  if(score===10){ // 🔥 WIN AT 10
-    win();
+  if(score===10){
+    cinematic();
   }
  };
 
  gameArea.appendChild(h);
 
- let speed=2+level; // 🔥 SLOWER FALL
-
  let fall=setInterval(()=>{
   let t=parseInt(h.style.top);
-  h.style.top=t+speed+"px";
+  h.style.top=t+3+"px";
   if(t>280){h.remove();clearInterval(fall);}
  },50);
 }
-setInterval(spawnHeart,1200); // slower spawn
+setInterval(spawnHeart,1200);
 
-// 🎬 CINEMATIC
-function win(){
+// TRUE CINEMATIC
+function cinematic(){
  winSound.play();
-
- for(let i=0;i<30;i++){
-  let e=document.createElement("div");
-  e.className="explosion-heart";
-  e.innerHTML="❤️";
-  e.style.left="50%";
-  e.style.top="50%";
-  e.style.setProperty("--x",(Math.random()-0.5)*400+"px");
-  e.style.setProperty("--y",(Math.random()-0.5)*400+"px");
-  document.body.appendChild(e);
-  setTimeout(()=>e.remove(),1000);
- }
-
  cinema.style.display="flex";
  cinemaText.innerHTML="";
 
- let message=`I love you ZOZOZOZOZOZOZO much noera...
-
-you really are the LOVE of my life,
-and I’ll love you my ENTIRE ENTIRE ENTIRE LIFE.
-
-I’ll love you until I can’t love you anymore.
-
-I still remember that video you sent me ages ago... hehe 😊
-
-I hope you still feel the same way,
-because I KNOW I DO.
-
-I love you noera ❤️`;
-
+ let lines=["Hey...","I meant everything I said.","I love you."];
  let i=0;
 
- let typing=setInterval(()=>{
-  cinemaText.innerHTML += message[i]==="\n"?"<br>":message[i];
-  i++;
-  if(i>=message.length){
-    clearInterval(typing);
-    setTimeout(showImages,1000);
+ function nextLine(){
+  if(i<lines.length){
+    cinemaText.innerHTML+="<br>"+lines[i];
+    i++;
+    setTimeout(nextLine,2000);
+  } else {
+    showImages();
   }
- },30);
+ }
+ nextLine();
 }
 
 function showImages(){
- let container=document.createElement("div");
- container.style.marginTop="20px";
-
- ["pic1.jpg","pic2.jpg","pic3.jpg"].forEach((src,i)=>{
+ let imgs=["pic1.jpg","pic2.jpg","pic3.jpg"];
+ imgs.forEach((src,i)=>{
   let img=document.createElement("img");
   img.src=src;
   img.width=150;
   img.style.opacity=0;
   img.style.transition="2s";
-  container.appendChild(img);
-
-  setTimeout(()=>img.style.opacity=1,1000*i+500);
+  cinemaText.appendChild(img);
+  setTimeout(()=>img.style.opacity=1,1000*i);
  });
-
- cinemaText.appendChild(container);
 }
 
-// QUESTION
-function yes(){ result.innerText="Of course I do ❤️"; }
+// NO BUTTON UPGRADE
+let texts=["no","really?","you sure?","nah 😭"];
 function moveNo(){
- noBtn.style.position="absolute";
- noBtn.style.left=Math.random()*80+"%";
- noBtn.style.top=Math.random()*80+"%";
+ let btn=noBtn;
+ btn.innerText=texts[Math.floor(Math.random()*texts.length)];
+ btn.style.position="absolute";
+ btn.style.left=Math.random()*80+"%";
+ btn.style.top=Math.random()*80+"%";
 }
+
+// HOLD BUTTON
+let hold;
+holdBtn.onmousedown=()=>{
+ hold=setTimeout(()=>{
+  holdMsg.style.opacity=1;
+ },1500);
+}
+holdBtn.onmouseup=()=>clearTimeout(hold);
 
 // SECRET
 function checkCode(){
  if(code.value==="Sketchy"){
   secretBox.style.display="block";
- } else {
-  alert("wrong 😏");
  }
 }
 
