@@ -11,130 +11,136 @@ body {
   text-align: center;
   padding: 20px;
   overflow-x: hidden;
+  transition: 0.5s;
+}
+
+.dark {
+  background: #0b0f1a;
+  color: white;
 }
 
 button {
   padding: 12px 20px;
   margin: 10px;
-  font-size: 16px;
-  border: none;
   border-radius: 10px;
-  background: #ffb6c1;
-  color: #1a1a1a;
+  border: none;
   cursor: pointer;
-  box-shadow: 0 0 10px #c2dab8;
+  background: #ffb6c1;
 }
 
-button:hover {
-  background: #c2dab8;
+.dark button {
+  background: #222;
+  color: white;
+  box-shadow: 0 0 10px #ff4d6d;
 }
 
-hr {
-  margin: 40px 0;
-  border: 1px solid #c2dab8;
-}
+hr { margin: 40px 0; }
 
-h2 {
-  color: #2e7d32;
-}
+.fade-img { opacity: 0; transition: 2s; }
+.show { opacity: 1; }
 
-#gameArea {
-  border: 2px solid #2e7d32;
-}
-
-/* Fade images */
-.fade-img {
-  opacity: 0;
-  transition: opacity 2s ease;
-}
-.fade-img.show {
-  opacity: 1;
-}
-
-/* Heart explosion */
 .explosion-heart {
   position: fixed;
   font-size: 24px;
-  animation: explode 1s ease-out forwards;
-}
-@keyframes explode {
-  from { transform: scale(1); opacity:1; }
-  to { transform: scale(2) translate(var(--x), var(--y)); opacity:0; }
+  animation: explode 1s forwards;
 }
 
-/* Petals */
+@keyframes explode {
+  to {
+    transform: translate(var(--x), var(--y)) scale(2);
+    opacity: 0;
+  }
+}
+
 .petal {
   position: fixed;
   top: -10px;
-  font-size: 18px;
   animation: fall linear forwards;
-  opacity: 0.8;
 }
+
 @keyframes fall {
   to {
     transform: translateY(100vh) rotate(360deg);
     opacity: 0;
   }
 }
+
+.chat {
+  max-width: 300px;
+  margin: auto;
+  text-align: left;
+}
+
+.msg {
+  background: #fff;
+  padding: 10px;
+  margin: 5px;
+  border-radius: 10px;
+}
+
+.dark .msg {
+  background: #222;
+}
+
+/* POPUP MESSAGE */
+.popup {
+  position: absolute;
+  font-size: 14px;
+  animation: fadeUp 1.5s forwards;
+  pointer-events: none;
+}
+
+@keyframes fadeUp {
+  0% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-30px); }
+}
 </style>
 </head>
 
 <body>
 
+<button onclick="toggleDark()">🌙 Night Mode</button>
+
 <h1>I love you Noera ❤️</h1>
 <h2 id="loveTimer"></h2>
 
-<p>I made this just for you...</p>
+<button onclick="startTyping()">Click me</button>
+<p id="poem"></p>
 
-<button onclick="showMessage()">Click me</button>
+<hr>
 
-<p id="message" style="display:none; max-width:600px; margin:auto;">
-Schone Noera,<br>
-licht dat mijn stille hart doet ontwaken,<br>
-Jouw ogen overstralen de sterren van de nacht;<br><br>
-
-In hun diepte laat mijn dolende ziel het verdriet verzaken<br>
-En rust zij zacht in warm en gouden pracht.<br><br>
-
-Je bruine haar valt als een zachte herfstomhelzing neer,<br>
-Een zijden schemer rond je lieve gelaat;<br><br>
-
-Zelfs jouw knieën, zo sierlijk, ontroeren mij steeds weer,<br>
-Mijn hart is het jouwe—nu en altijd, voorwaar.
-</p>
+<div class="chat">
+  <div class="msg">You: I miss you</div>
+  <div class="msg">Her: I miss you more</div>
+  <div class="msg">You: not possible</div>
+</div>
 
 <hr>
 
 <h2>Catch the hearts ❤️</h2>
 <p>Score: <span id="score">0</span></p>
-<div id="gameArea" style="position:relative; height:300px;"></div>
+<div id="gameArea" style="height:300px; position:relative;"></div>
 
-<div id="reward" style="display:none; margin-top:30px;">
+<div id="reward" style="display:none;">
   <h2>You unlocked something ❤️</h2>
 
   <p>
     I love you ZOZOZOZOZOZOZO much noera,<br><br>
-
     you really are the LOVE of my life,<br>
     and I’ll love you my ENTIRE ENTIRE ENTIRE LIFE.<br><br>
-
     I’ll love you until I can’t love you anymore.<br><br>
-
-    I still remember that video you sent me ages ago...<br>
-    hehe 😊<br><br>
-
+    I still remember that video you sent me ages ago... hehe 😊<br><br>
     I hope you still feel the same way,<br>
     because I KNOW I DO.<br><br>
-
     I love you noera ❤️
   </p>
 
-  <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
-    <img src="pic1.jpg" width="150" class="fade-img" id="img1">
-    <img src="pic2.jpg" width="150" class="fade-img" id="img2">
-    <img src="pic3.jpg" width="150" class="fade-img" id="img3">
-  </div>
+  <img src="pic1.jpg" width="150" class="fade-img" id="i1">
+  <img src="pic2.jpg" width="150" class="fade-img" id="i2">
+  <img src="pic3.jpg" width="150" class="fade-img" id="i3">
 </div>
+
+<audio id="winSound" src="love.mp3"></audio>
 
 <hr>
 
@@ -146,114 +152,133 @@ Mijn hart is het jouwe—nu en altijd, voorwaar.
 <hr>
 
 <h2>Catch those hearts Noera ❤️</h2>
-<p>
-Catch those hearts Noera, and maybe you will see something AWESOME 👀❤️
-</p>
+<p>Catch those hearts Noera, and maybe you will see something AWESOME 👀❤️</p>
 
 <script>
 
-// show poem
-function showMessage() {
-  document.getElementById("message").style.display = "block";
+function toggleDark(){
+  document.body.classList.toggle("dark");
 }
 
-// love timer
-function updateLoveTimer() {
-  let startDate = new Date("2023-10-09T00:00:00"); // CHANGE YEAR if needed
+// TYPEWRITER
+let text = `Schone Noera,
+licht dat mijn stille hart doet ontwaken,
+Jouw ogen overstralen de sterren van de nacht;
+
+In hun diepte laat mijn dolende ziel het verdriet verzaken
+En rust zij zacht in warm en gouden pracht;
+
+Je bruine haar valt als een zachte herfstomhelzing neer,
+Een zijden schemer rond je lieve gelaat;
+
+Zelfs jouw knieën, zo sierlijk, ontroeren mij steeds weer,
+Mijn hart is het jouwe—nu en altijd, voorwaar.`;
+
+function startTyping(){
+  let el = document.getElementById("poem");
+  el.innerHTML = "";
+  let i = 0;
+
+  let interval = setInterval(()=>{
+    el.innerHTML += text[i] === "\n" ? "<br>" : text[i];
+    i++;
+    if(i >= text.length) clearInterval(interval);
+  }, 30);
+}
+
+// TIMER
+function updateLoveTimer(){
+  let start = new Date("2023-10-09");
   let now = new Date();
-  let diff = now - startDate;
-
-  let days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  let hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-  let minutes = Math.floor((diff / (1000 * 60)) % 60);
-
+  let diff = now - start;
+  let days = Math.floor(diff/(1000*60*60*24));
   document.getElementById("loveTimer").innerText =
-    "I've loved you for " + days + " days, " + hours + " hours, and " + minutes + " minutes ❤️";
+  "I've loved you for " + days + " days ❤️";
 }
-
-setInterval(updateLoveTimer, 1000);
+setInterval(updateLoveTimer,1000);
 updateLoveTimer();
 
-// game
-let score = 0;
+// GAME
+let score=0;
 
-function spawnHeart() {
-  let heart = document.createElement("div");
-  heart.innerHTML = "❤️";
-  heart.style.position = "absolute";
-  heart.style.left = Math.random() * 90 + "%";
-  heart.style.top = "0px";
-  heart.style.cursor = "pointer";
+function spawnHeart(){
+  let h=document.createElement("div");
+  h.innerHTML="❤️";
+  h.style.position="absolute";
+  h.style.left=Math.random()*90+"%";
+  h.style.top="0px";
+  h.style.cursor="pointer";
 
-  heart.onclick = () => {
+  h.onclick=(e)=>{
     score++;
-    document.getElementById("score").innerText = score;
-    heart.remove();
+    document.getElementById("score").innerText=score;
 
-    if (score === 10) {
-      document.getElementById("reward").style.display = "block";
+    // ❤️ POPUP MESSAGE
+    let pop=document.createElement("div");
+    pop.className="popup";
+    pop.innerText="WELL DONE, I'M PROUD OF YOU AND I LOVE YOU ❤️";
+    pop.style.left=h.style.left;
+    pop.style.top=h.style.top;
+    document.getElementById("gameArea").appendChild(pop);
+    setTimeout(()=>pop.remove(),1500);
 
-      setTimeout(() => document.getElementById("img1").classList.add("show"), 500);
-      setTimeout(() => document.getElementById("img2").classList.add("show"), 1500);
-      setTimeout(() => document.getElementById("img3").classList.add("show"), 2500);
+    if(Math.random()<0.3){
+      h.innerHTML="I LOVE YOU";
+    }
 
-      // explosion
-      for (let i = 0; i < 30; i++) {
-        let heart = document.createElement("div");
-        heart.className = "explosion-heart";
-        heart.innerHTML = "❤️";
+    h.remove();
 
-        heart.style.left = "50%";
-        heart.style.top = "50%";
+    if(score==10){
+      document.getElementById("winSound").play();
+      document.getElementById("reward").style.display="block";
 
-        heart.style.setProperty("--x", (Math.random() - 0.5) * 400 + "px");
-        heart.style.setProperty("--y", (Math.random() - 0.5) * 400 + "px");
+      setTimeout(()=>i1.classList.add("show"),500);
+      setTimeout(()=>i2.classList.add("show"),1500);
+      setTimeout(()=>i3.classList.add("show"),2500);
 
-        document.body.appendChild(heart);
-        setTimeout(() => heart.remove(), 1000);
+      for(let i=0;i<30;i++){
+        let e=document.createElement("div");
+        e.className="explosion-heart";
+        e.innerHTML="❤️";
+        e.style.left="50%";
+        e.style.top="50%";
+        e.style.setProperty("--x",(Math.random()-0.5)*400+"px");
+        e.style.setProperty("--y",(Math.random()-0.5)*400+"px");
+        document.body.appendChild(e);
+        setTimeout(()=>e.remove(),1000);
       }
     }
   };
 
-  document.getElementById("gameArea").appendChild(heart);
+  document.getElementById("gameArea").appendChild(h);
 
-  let fall = setInterval(() => {
-    let top = parseInt(heart.style.top);
-    heart.style.top = top + 5 + "px";
-
-    if (top > 280) {
-      heart.remove();
-      clearInterval(fall);
-    }
-  }, 50);
+  let fall=setInterval(()=>{
+    let t=parseInt(h.style.top);
+    h.style.top=t+5+"px";
+    if(t>280){h.remove();clearInterval(fall);}
+  },50);
 }
+setInterval(spawnHeart,1000);
 
-setInterval(spawnHeart, 1000);
+// PETALS
+setInterval(()=>{
+  let p=document.createElement("div");
+  p.className="petal";
+  p.innerHTML="🌸";
+  p.style.left=Math.random()*100+"vw";
+  p.style.animationDuration=(3+Math.random()*5)+"s";
+  document.body.appendChild(p);
+  setTimeout(()=>p.remove(),8000);
+},300);
 
-// petals
-setInterval(() => {
-  let petal = document.createElement("div");
-  petal.className = "petal";
-  petal.innerHTML = "🌸";
-
-  petal.style.left = Math.random() * 100 + "vw";
-  petal.style.animationDuration = (3 + Math.random() * 5) + "s";
-
-  document.body.appendChild(petal);
-
-  setTimeout(() => petal.remove(), 8000);
-}, 300);
-
-// love question
-function yes() {
-  document.getElementById("result").innerText = "Of course I do. I always will ❤️";
+// QUESTION
+function yes(){
+  result.innerText="Of course I do ❤️";
 }
-
-function moveNo() {
-  let btn = document.getElementById("noBtn");
-  btn.style.position = "absolute";
-  btn.style.left = Math.random() * 80 + "%";
-  btn.style.top = Math.random() * 80 + "%";
+function moveNo(){
+  noBtn.style.position="absolute";
+  noBtn.style.left=Math.random()*80+"%";
+  noBtn.style.top=Math.random()*80+"%";
 }
 
 </script>
