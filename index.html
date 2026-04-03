@@ -73,7 +73,7 @@ h1,h2 {
   to {opacity:0; transform:translateY(-20px);}
 }
 
-/* BLOSSOM PETALS */
+/* BLOSSOMS */
 .petal {
   position:fixed;
   top:-10px;
@@ -110,11 +110,24 @@ h1,h2 {
  justify-content:center;
  z-index:999;
  padding:20px;
+ animation:fadeIn 1s ease-in;
+}
+
+@keyframes fadeIn {
+ from {opacity:0;}
+ to {opacity:1;}
 }
 
 #cinemaText {
   max-width:600px;
   line-height:1.6;
+  animation:pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {transform:scale(1);}
+  50% {transform:scale(1.02);}
+  100% {transform:scale(1);}
 }
 
 #imageRow {
@@ -137,12 +150,6 @@ h1,h2 {
   opacity:0;
   transition:2s;
   color:#66bb6a;
-}
-
-/* TIMER */
-#loveTimer {
-  font-size:18px;
-  margin-bottom:10px;
 }
 </style>
 </head>
@@ -239,19 +246,27 @@ setInterval(()=>{
  loveTimer.innerText=`${d}d ${h}h ${m}m ${s}s ❤️`;
 },1000);
 
-// POEM
-let poemText=`Schone Noera,
-licht dat mijn stille hart doet ontwaken,
-Jouw ogen overstralen de sterren van de nacht...`;
+// FULL POEM TYPEWRITER
+let poemText=`Schone Noera, licht dat mijn stille hart doet ontwaken,
+Jouw ogen overstralen de sterren van de nacht;
+
+In hun diepte laat mijn dolende ziel het verdriet verzaken
+En rust zij zacht in warm en gouden pracht.
+
+Je bruine haar valt als een zachte herfstomhelzing neer,
+Een zijden schemer rond je lieve gelaat;
+
+Zelfs jouw knieën, zo sierlijk, ontroeren mij steeds weer,
+Mijn hart is het jouwe—nu en altijd, voorwaar.`;
 
 function startTyping(){
  let i=0;
  poem.innerHTML="";
  let int=setInterval(()=>{
-  poem.innerHTML+=poemText[i]||"";
+  poem.innerHTML+=poemText[i]==="\n"?"<br>":poemText[i];
   i++;
   if(i>=poemText.length) clearInterval(int);
- },30);
+ },25);
 }
 
 // HEART TRAIL
@@ -276,9 +291,8 @@ setInterval(()=>{
  setTimeout(()=>p.remove(),9000);
 },400);
 
-// GAME WITH LEVELS
-let score=0;
-let level=1;
+// GAME
+let score=0, level=1;
 
 function spawnHeart(){
  let h=document.createElement("div");
@@ -290,7 +304,7 @@ function spawnHeart(){
 
  h.onclick=()=>{
   score++;
-  document.getElementById("score").innerText=score;
+  score.innerText=score;
 
   if(score%5===0){
     level++;
@@ -316,7 +330,7 @@ function spawnHeart(){
 }
 setInterval(spawnHeart,1200);
 
-// CINEMATIC TYPEWRITER
+// CINEMATIC UPGRADE
 function cinematic(){
  winSound.play();
  cinema.style.display="flex";
@@ -355,8 +369,10 @@ function closeCinema(){
  cinema.style.display="none";
 }
 
-// NO BUTTON
+// FUNNY NO BUTTON
+let texts=["no","really?","are you sure?","nah 😭","you serious?","wrong answer 😭"];
 function moveNo(){
+ noBtn.innerText=texts[Math.floor(Math.random()*texts.length)];
  noBtn.style.position="absolute";
  noBtn.style.left=Math.random()*80+"%";
  noBtn.style.top=Math.random()*80+"%";
