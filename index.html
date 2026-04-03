@@ -9,6 +9,7 @@ body {
   font-family: Arial;
   text-align: center;
   overflow-x: hidden;
+  transition:0.5s;
 }
 
 button {
@@ -17,6 +18,48 @@ button {
   border-radius:10px;
   border:none;
   background:#ffb6c1;
+  cursor:pointer;
+}
+
+/* LOCK SCREEN */
+#lockScreen {
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background:black;
+  color:white;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+}
+
+/* HEART TRAIL */
+.trail {
+  position:fixed;
+  pointer-events:none;
+  animation:fade 1s forwards;
+}
+@keyframes fade { to {opacity:0; transform:translateY(-20px);} }
+
+/* PETALS */
+.petal {
+  position:fixed;
+  top:-10px;
+  animation:fall linear forwards;
+}
+@keyframes fall {
+  to { transform:translateY(100vh); opacity:0; }
+}
+
+/* POPUP */
+.popup {
+  position:absolute;
+  animation:fadeUp 1.5s forwards;
+}
+@keyframes fadeUp {
+  to { opacity:0; transform:translateY(-30px); }
 }
 
 /* CINEMATIC */
@@ -30,27 +73,11 @@ button {
  flex-direction:column;
  align-items:center;
  justify-content:center;
- font-size:24px;
  z-index:999;
+ font-size:22px;
+ padding:20px;
 }
 
-/* HEART TRAIL */
-.trail {
- position:fixed;
- pointer-events:none;
- animation:fade 1s forwards;
-}
-@keyframes fade { to {opacity:0; transform:translateY(-20px);} }
-
-/* PETALS */
-.petal {
- position:fixed;
- top:-10px;
- animation:fall linear forwards;
-}
-@keyframes fall { to {transform:translateY(100vh); opacity:0;} }
-
-/* HOLD BUTTON */
 #holdMsg { opacity:0; transition:2s; }
 
 </style>
@@ -58,8 +85,17 @@ button {
 
 <body>
 
+<!-- 🔐 LOCK -->
+<div id="lockScreen">
+<h2>You cannot pass until you enter the name of the love of my lifes fortnite username 🎮❤️</h2>
+<input id="passwordInput">
+<button onclick="checkPassword()">Enter</button>
+<p id="wrongMsg"></p>
+</div>
+
 <h1>I love you Noera ❤️</h1>
 <h2 id="loveTimer"></h2>
+<p id="returnMsg"></p>
 
 <button onclick="startTyping()">Click me</button>
 <p id="poem"></p>
@@ -90,28 +126,52 @@ button {
 <input id="code">
 <button onclick="checkCode()">Unlock</button>
 <div id="secretBox" style="display:none;">
-<p>HEHE your always gonna be my sketchy kid ❤️</p>
+<p>HEHE , you guessed It , your always gonna be my sketchy kid ❤️</p>
 <img src="secret.jpg" width="200">
 </div>
 
-<div id="cinema"><div id="cinemaText"></div></div>
+<div id="cinema">
+  <div id="cinemaText"></div>
+  <button onclick="closeCinema()">⬅ Back</button>
+</div>
 
 <script>
 
-// TIMER
+// 🔐 PASSWORD
+function checkPassword(){
+ let input=passwordInput.value;
+
+ if(input==="ussyflower"){
+   lockScreen.style.display="none";
+
+   if(localStorage.getItem("visited")){
+     returnMsg.innerText="You came back… I was hoping you would ❤️";
+   } else {
+     returnMsg.innerText="Hi… this is all for you ❤️";
+     localStorage.setItem("visited","true");
+   }
+
+ } else {
+   wrongMsg.innerText="Nope 😏";
+ }
+}
+
+// 🕰️ TIMER
 setInterval(()=>{
  let start=new Date("2025-10-09");
  let now=new Date();
- let days=Math.floor((now-start)/(1000*60*60*24));
- loveTimer.innerText="I've loved you for "+days+" days ❤️";
+ let diff=now-start;
+ let days=Math.floor(diff/(1000*60*60*24));
+ loveTimer.innerText=
+ "I've loved you for "+days+" days ❤️\nSince the day I spoke to you hehe";
 },1000);
 
-// TYPEWRITER
+// ✍️ TYPEWRITER
 function startTyping(){
  poem.innerText="Schone Noera...";
 }
 
-// HEART TRAIL forming effect
+// 💖 HEART TRAIL
 document.addEventListener("mousemove", e=>{
  let h=document.createElement("div");
  h.className="trail";
@@ -122,7 +182,7 @@ document.addEventListener("mousemove", e=>{
  setTimeout(()=>h.remove(),1000);
 });
 
-// PETALS
+// 🌸 PETALS
 setInterval(()=>{
  let p=document.createElement("div");
  p.className="petal";
@@ -133,7 +193,7 @@ setInterval(()=>{
  setTimeout(()=>p.remove(),8000);
 },400);
 
-// GAME
+// 🎮 GAME
 let score=0;
 
 function spawnHeart(){
@@ -147,14 +207,14 @@ function spawnHeart(){
   score++;
   scoreSpan.innerText=score;
 
-  let messages=["I LOVE YOU NOERA ❤️","keep going ❤️","you got this ❤️"];
-  let msg=document.createElement("div");
-  msg.innerText=messages[Math.floor(Math.random()*messages.length)];
-  msg.style.position="absolute";
-  msg.style.left=h.style.left;
-  msg.style.top=h.style.top;
-  gameArea.appendChild(msg);
-  setTimeout(()=>msg.remove(),1000);
+  let msgs=["I LOVE YOU NOERA ❤️","keep going ❤️","you got this ❤️"];
+  let pop=document.createElement("div");
+  pop.className="popup";
+  pop.innerText=msgs[Math.floor(Math.random()*msgs.length)];
+  pop.style.left=h.style.left;
+  pop.style.top=h.style.top;
+  gameArea.appendChild(pop);
+  setTimeout(()=>pop.remove(),1000);
 
   h.remove();
 
@@ -173,7 +233,7 @@ function spawnHeart(){
 }
 setInterval(spawnHeart,1200);
 
-// TRUE CINEMATIC
+// 🎬 CINEMATIC
 function cinematic(){
  winSound.play();
  cinema.style.display="flex";
@@ -182,21 +242,20 @@ function cinematic(){
  let lines=["Hey...","I meant everything I said.","I love you."];
  let i=0;
 
- function nextLine(){
+ function next(){
   if(i<lines.length){
     cinemaText.innerHTML+="<br>"+lines[i];
     i++;
-    setTimeout(nextLine,2000);
+    setTimeout(next,2000);
   } else {
     showImages();
   }
  }
- nextLine();
+ next();
 }
 
 function showImages(){
- let imgs=["pic1.jpg","pic2.jpg","pic3.jpg"];
- imgs.forEach((src,i)=>{
+ ["pic1.jpg","pic2.jpg","pic3.jpg"].forEach((src,i)=>{
   let img=document.createElement("img");
   img.src=src;
   img.width=150;
@@ -207,31 +266,36 @@ function showImages(){
  });
 }
 
-// NO BUTTON UPGRADE
-let texts=["no","really?","you sure?","nah 😭"];
-function moveNo(){
- let btn=noBtn;
- btn.innerText=texts[Math.floor(Math.random()*texts.length)];
- btn.style.position="absolute";
- btn.style.left=Math.random()*80+"%";
- btn.style.top=Math.random()*80+"%";
+function closeCinema(){
+ cinema.style.display="none";
+ cinemaText.innerHTML="";
 }
 
-// HOLD BUTTON
+// ❌ NO BUTTON
+let texts=["no","really?","you sure?","nah 😭"];
+function moveNo(){
+ noBtn.innerText=texts[Math.floor(Math.random()*texts.length)];
+ noBtn.style.position="absolute";
+ noBtn.style.left=Math.random()*80+"%";
+ noBtn.style.top=Math.random()*80+"%";
+}
+
+// ✋ HOLD
 let hold;
 holdBtn.onmousedown=()=>{
- hold=setTimeout(()=>{
-  holdMsg.style.opacity=1;
- },1500);
+ hold=setTimeout(()=>{ holdMsg.style.opacity=1; },1500);
 }
 holdBtn.onmouseup=()=>clearTimeout(hold);
 
-// SECRET
+// 🔐 SECRET
 function checkCode(){
  if(code.value==="Sketchy"){
-  secretBox.style.display="block";
+   secretBox.style.display="block";
  }
 }
+
+// YES
+function yes(){ result.innerText="Of course I do ❤️"; }
 
 </script>
 
