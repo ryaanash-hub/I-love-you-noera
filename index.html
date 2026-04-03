@@ -5,11 +5,11 @@
 
 <style>
 body {
-  background: linear-gradient(135deg, #ffb6c1, #c2dab8);
+  background: linear-gradient(135deg, #ffb6c1, #d9f2d9);
   font-family: Arial;
   text-align: center;
   overflow-x: hidden;
-  transition: 0.5s;
+  transition:0.5s;
   color:#1a1a1a;
 }
 
@@ -31,16 +31,16 @@ button {
 .dark button {
   background:#1f2937;
   color:white;
-  box-shadow:0 0 10px #c2dab8;
+  box-shadow:0 0 12px #a8e6cf;
 }
 
-/* GREEN ACCENTS */
+/* LIGHT GREEN ACCENTS */
 h1,h2 {
-  color:#2e7d32;
+  color:#66bb6a;
 }
 
 .dark h1,.dark h2 {
-  color:#8ef5b3;
+  color:#a8e6cf;
 }
 
 /* LOCK */
@@ -73,21 +73,22 @@ h1,h2 {
   to {opacity:0; transform:translateY(-20px);}
 }
 
-/* PETALS */
+/* BLOSSOM PETALS */
 .petal {
   position:fixed;
   top:-10px;
+  font-size:18px;
   animation:fall linear forwards;
 }
 
 @keyframes fall {
-  to { transform:translateY(100vh); opacity:0;}
+  to { transform:translateY(100vh) rotate(360deg); opacity:0;}
 }
 
 /* POPUP */
 .popup {
   position:absolute;
-  color:#2e7d32;
+  color:#66bb6a;
   font-weight:bold;
   animation:fadeUp 1.2s forwards;
 }
@@ -135,7 +136,7 @@ h1,h2 {
 #holdMsg {
   opacity:0;
   transition:2s;
-  color:#2e7d32;
+  color:#66bb6a;
 }
 
 /* TIMER */
@@ -143,7 +144,6 @@ h1,h2 {
   font-size:18px;
   margin-bottom:10px;
 }
-
 </style>
 </head>
 
@@ -168,7 +168,7 @@ h1,h2 {
 <hr>
 
 <h2>Catch the hearts ❤️</h2>
-<p>Score: <span id="score">0</span></p>
+<p>Level: <span id="level">1</span> | Score: <span id="score">0</span></p>
 <div id="gameArea" style="height:300px; position:relative;"></div>
 
 <audio id="winSound" src="love.mp3"></audio>
@@ -198,9 +198,7 @@ h1,h2 {
 
 <div id="cinema">
 <div id="cinemaText"></div>
-
 <div id="imageRow"></div>
-
 <button onclick="closeCinema()">⬅ Back</button>
 </div>
 
@@ -222,13 +220,12 @@ function checkPassword(){
     returnMsg.innerText="Hi… this is all for you ❤️";
     localStorage.setItem("visited","true");
   }
-
  } else {
   wrongMsg.innerText="Nope 😏";
  }
 }
 
-// TIMER FULL
+// TIMER
 setInterval(()=>{
  let start=new Date("2025-10-09");
  let now=new Date();
@@ -239,13 +236,13 @@ setInterval(()=>{
  let m=Math.floor((diff/(1000*60))%60);
  let s=Math.floor((diff/1000)%60);
 
- loveTimer.innerText =
- `${d}d ${h}h ${m}m ${s}s ❤️\nSince the day I spoke to you hehe`;
+ loveTimer.innerText=`${d}d ${h}h ${m}m ${s}s ❤️`;
 },1000);
 
 // POEM
 let poemText=`Schone Noera,
-licht dat mijn stille hart doet ontwaken...`;
+licht dat mijn stille hart doet ontwaken,
+Jouw ogen overstralen de sterren van de nacht...`;
 
 function startTyping(){
  let i=0;
@@ -258,24 +255,30 @@ function startTyping(){
 }
 
 // HEART TRAIL
-let letters=["N","O","E","R","A"];
-let index=0;
-
 document.addEventListener("mousemove", e=>{
  let h=document.createElement("div");
  h.className="trail";
- h.innerText=letters[index];
- index=(index+1)%letters.length;
-
+ h.innerHTML="❤️";
  h.style.left=e.pageX+"px";
  h.style.top=e.pageY+"px";
-
  document.body.appendChild(h);
  setTimeout(()=>h.remove(),1000);
 });
 
-// GAME
+// BLOSSOMS
+setInterval(()=>{
+ let p=document.createElement("div");
+ p.className="petal";
+ p.innerHTML="🌸";
+ p.style.left=Math.random()*100+"vw";
+ p.style.animationDuration=(5+Math.random()*5)+"s";
+ document.body.appendChild(p);
+ setTimeout(()=>p.remove(),9000);
+},400);
+
+// GAME WITH LEVELS
 let score=0;
+let level=1;
 
 function spawnHeart(){
  let h=document.createElement("div");
@@ -289,14 +292,11 @@ function spawnHeart(){
   score++;
   document.getElementById("score").innerText=score;
 
-  let pop=document.createElement("div");
-  pop.className="popup";
-  pop.innerText="I LOVE YOU NOERA ❤️";
-  pop.style.left=h.style.left;
-  pop.style.top=h.style.top;
-  gameArea.appendChild(pop);
+  if(score%5===0){
+    level++;
+    document.getElementById("level").innerText=level;
+  }
 
-  setTimeout(()=>pop.remove(),1000);
   h.remove();
 
   if(score===10){
@@ -306,21 +306,37 @@ function spawnHeart(){
 
  gameArea.appendChild(h);
 
+ let speed=2+level;
+
  let fall=setInterval(()=>{
   let t=parseInt(h.style.top);
-  h.style.top=t+3+"px";
+  h.style.top=t+speed+"px";
   if(t>280){h.remove();clearInterval(fall);}
  },50);
 }
 setInterval(spawnHeart,1200);
 
-// CINEMATIC FIXED
+// CINEMATIC TYPEWRITER
 function cinematic(){
  winSound.play();
  cinema.style.display="flex";
+ cinemaText.innerHTML="";
 
- cinemaText.innerHTML="Hey...<br><br>I meant everything I said.<br><br>I love you.";
+ let msg="Hey...\n\nI meant everything I said.\n\nI love you.";
 
+ let i=0;
+ let int=setInterval(()=>{
+  cinemaText.innerHTML+=msg[i]==="\n"?"<br>":msg[i];
+  i++;
+
+  if(i>=msg.length){
+    clearInterval(int);
+    showImages();
+  }
+ },40);
+}
+
+function showImages(){
  let row=document.getElementById("imageRow");
  row.innerHTML="";
 
